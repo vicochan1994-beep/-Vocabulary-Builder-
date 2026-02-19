@@ -24,19 +24,19 @@ jobs:
           python-version: '3.9'
       
       - name: Install Dependencies
-        run: |
-          pip install requests google-generativeai
+        run: pip install requests
 
       - name: Run AI Review
         id: review
         env:
           COMMENT_BODY: ${{ github.event.comment.body }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # Updated secret name
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: "https://api.deepseek.com"
+          LLM_MODEL: "deepseek-chat"
         run: |
           cd scripts
           python review_comment.py
           
-          # Check if feedback file exists
           if [ -f "feedback_body.md" ]; then
              echo "HAS_FEEDBACK=true" >> $GITHUB_ENV
              echo "FEEDBACK_PATH=$(pwd)/feedback_body.md" >> $GITHUB_ENV

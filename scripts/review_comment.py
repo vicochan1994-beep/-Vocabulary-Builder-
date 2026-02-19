@@ -1,14 +1,13 @@
 import os
-import google.generativeai as genai
+import json
+import requests
+import sys
 
-def check_grammar_gemini(comment_body, api_key):
-    # Configure Gemini
-    genai.configure(api_key=api_key)
-    
-    # Use a specific, capable model. 
-    # In 2026, we assume 'gemini-1.5-pro' is standard/legacy and maybe 'gemini-2.0' exists, 
-    # but 'gemini-1.5-pro-latest' is a safe, high-quality bet for "latest version" alias.
-    model = genai.GenerativeModel('gemini-1.5-pro-latest')
+def check_grammar(comment_body, api_key):
+    # Determine API base URL and model based on available keys or defaults
+    # Defaulting to a generic OpenAI-compatible endpoint (could be DeepSeek, Moonshot, etc.)
+    base_url = os.environ.get("LLM_BASE_URL", "https://api.deepseek.com")
+    model = os.environ.get("LLM_MODEL", "deepseek-chat")
     
     system_prompt = """
 You are a helpful, encouraging English teacher for a beginner student (Level A1/A2).
@@ -22,38 +21,65 @@ Your task:
 
 Format your response in Markdown. Keep it concise.
 """
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
     
-    # Gemini 1.5 style interaction
-    # We combine system prompt and user input as Gemini doesn't always strictly use 'system' role in same way as OpenAI in basic chats,
-    # but system_instruction is supported in newer SDKs. We'll use a direct prompt approach for robustness.
-    full_prompt = f"{system_prompt}\n\nStudent's homework:\n{comment_body}"
+    data = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": f"Student's homework:\n{comment_body}"}
+        ],
+        "temperature": 0.7
+    }
 
     try:
-        response = model.generate_content(full_prompt)
-        return response.text
+        response = requests.post(f"{base_url}/chat/completions", headers=headers, json=data)
+        response.raise_for_status()
+        result = response.json()
+        return result['choices'][0]['message']['content']
     except Exception as e:
-        return f"Error contacting Gemini Teacher: {str(e)}\n\n(Please check if your GEMINI_API_KEY is correct in Repo Settings)"
+        return f"Error contacting AI Teacher: {str(e)}\n\n(Please check if your LLM_API_KEY is active in Repo Settings > Secrets)"
 
 def main():
     comment_body = os.environ.get("COMMENT_BODY")
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = os.environ.get("LLM_API_KEY")
+
+    error_message = ""
+    feedback = ""
 
     if not comment_body:
         print("No comment body found.")
         return
 
     if not api_key:
-        print("Error: GEMINI_API_KEY not found.")
-        # Create a dummy file to warn user in the PR comment if we wanted, but better to fail or log.
-        # Let's write a warning message to the feedback file so the user sees it in the issue.
-        with open('feedback_body.md', 'w') as f:
-            f.write("⚠️ **AI 助教未启动**\n\n请在仓库 Settings -> Secrets -> Actions 里添加 `GEMINI_API_KEY`。\n(去 Google AI Studio 申请免费 Key)")
-        return
-
-    feedback = check_grammar_gemini(comment_body, api_key)
+        error_message = "⚠️ **AI Coach Config Error**: I cannot find the `LLM_API_KEY`. Please check your Repository Settings > Secrets. (找不到 Key，请检查设置)"
+    else:
+        # Call AI
+        feedback = check_grammar(comment_body, api_key)
     
-    with open('feedback_body.md', 'w') as f:
-        f.write(feedback)
+    # If feedback contains "Error", treat it as an error message
+    if feedback.startswith("Error"):
+        error_message = f"⚠️ **AI Connection Error**: {feedback}"
+        feedback = ""
+
+    # Prepare final content
+    final_output = ""
+    if error_message:
+        final_output = error_message
+    else:
+        final_output = feedback
+
+    # Always write to file if there is something to say
+    if final_output:
+        with open('feedback_body.md', 'w') as f:
+            f.write(final_output)
+            
+    # Debug print
+    print(f"Final output prepared: {final_output[:50]}...")
 
 if __name__ == "__main__":
     main()
