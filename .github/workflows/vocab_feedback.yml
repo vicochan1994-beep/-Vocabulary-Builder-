@@ -1,0 +1,55 @@
+name: AI Coach Feedback
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+  pull_requests: write
+
+jobs:
+  review-homework:
+    # Only run on comments in issues (not PRs) and avoid loops (bot comments)
+    if: ${{ !github.event.issue.pull_request && github.event.comment.user.type != 'Bot' }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Install Dependencies
+        run: pip install requests
+
+      - name: Run AI Review
+        id: review
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}  # User needs to set this
+          LLM_BASE_URL: "https://api.deepseek.com" # Default to DeepSeek, editable
+          LLM_MODEL: "deepseek-chat"
+        run: |
+          cd scripts
+          python review_comment.py
+          
+          # Check if feedback file exists (it means we have a response)
+          if [ -f "feedback_body.md" ]; then
+             echo "HAS_FEEDBACK=true" >> $GITHUB_ENV
+             echo "FEEDBACK_PATH=$(pwd)/feedback_body.md" >> $GITHUB_ENV
+          else
+             echo "HAS_FEEDBACK=false" >> $GITHUB_ENV
+             # If script printed a fallback message to stdout (not implemented in script above exactly like this but fine)
+             # We rely on file existence
+          fi
+
+      - name: Post Feedback
+        if: env.HAS_FEEDBACK == 'true'
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body-path: ${{ env.FEEDBACK_PATH }}
