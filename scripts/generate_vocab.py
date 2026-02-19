@@ -47,12 +47,12 @@ Boss，今天的 5 个单词来了。请在下方评论区 **造句打卡**，�
 **坚持把这堆单词吃透！** 
 """
 
-    # Output for GitHub Actions
-    # In a real environment, we would use environment files to set outputs
-    # For now, we print to stdout or write to a file that the Action can read
-    print(f"::set-output name=TITLE::{title}")
+    # Output for GitHub Actions using GITHUB_OUTPUT
+    if "GITHUB_OUTPUT" in os.environ:
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            f.write(f"TITLE={title}\n")
     
-    # Writing body to a file to handle multiline content safely for Actions
+    # Writing body to a file
     with open('issue_body.md', 'w') as f:
         f.write(body)
 
