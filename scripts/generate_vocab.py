@@ -26,9 +26,11 @@ def main():
     title = f"每日单词挑战 (Daily Vocab Challenge) - {date_str}"
     
     body = f"""
-# 🎓 {date_str} 每日单词挑战
+# 🌱 {date_str} 每日口语积累 (Daily Speaking)
 
-Boss，今天的 5 个单词来了。请在下方评论区 **造句打卡**，完成后关闭此 Issue。
+Boss，收到！我们的目标是 **5 个月后流利对话**。
+今天是 **第 1 阶段 - 生存英语 (Survival English)**。
+请大声朗读下面的例句，并在评论区模仿造句。
 
 ---
 

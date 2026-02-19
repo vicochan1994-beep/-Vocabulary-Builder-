@@ -1,62 +1,62 @@
 [
   {
-    "word": "Ubiquitous",
-    "part_of_speech": "adj.",
-    "definition": "Present, appearing, or found everywhere.",
-    "example": "Smartphones have become ubiquitous in modern society."
+    "word": "Want",
+    "part_of_speech": "vb. (动词)",
+    "definition": "想要 (I want... = 我想要...)",
+    "example": "I want a cup of coffee. (我想要一杯咖啡。)"
   },
   {
-    "word": "Ephemeral",
-    "part_of_speech": "adj.",
-    "definition": "Lasting for a very short time.",
-    "example": "The ephemeral nature of fashion trends makes them hard to follow."
+    "word": "Need",
+    "part_of_speech": "vb. (动词)",
+    "definition": "需要 (I need... = 我需要...)",
+    "example": "I need some help. (我需要一些帮助。)"
   },
   {
-    "word": "Serendipity",
-    "part_of_speech": "n.",
-    "definition": "The occurrence and development of events by chance in a happy or beneficial way.",
-    "example": "It was pure serendipity that we met at the coffee shop right before the rain started."
+    "word": "Have",
+    "part_of_speech": "vb. (动词)",
+    "definition": "有/吃/喝 (I have... = 我有...)",
+    "example": "I have a meeting today. (我今天有个会。)"
   },
   {
-    "word": "Obfuscate",
-    "part_of_speech": "v.",
-    "definition": "Render obscure, unclear, or unintelligible.",
-    "example": "The politician used complex jargon to obfuscate the truth."
+    "word": "Where",
+    "part_of_speech": "adv. (疑问词)",
+    "definition": "哪里 (Where is...? = ...在哪里?)",
+    "example": "Where is the bathroom? (洗手间在哪里？)"
   },
   {
-    "word": "Cacophony",
-    "part_of_speech": "n.",
-    "definition": "A harsh, discordant mixture of sounds.",
-    "example": "The cacophony of the construction site made it impossible to concentrate."
+    "word": "When",
+    "part_of_speech": "adv. (疑问词)",
+    "definition": "什么时候 (When can we...? = 我们什么时候能...?)",
+    "example": "When can we meet? (我们什么时候能见面？)"
   },
   {
-    "word": "Lugubrious",
-    "part_of_speech": "adj.",
-    "definition": "Looking or sounding sad and dismal.",
-    "example": "His lugubrious expression suggested he had received bad news."
+    "word": "How much",
+    "part_of_speech": "phrase (短语)",
+    "definition": "多少钱 (询问价格)",
+    "example": "How much is this? (这个多少钱？)"
   },
   {
-    "word": "Pragmatic",
-    "part_of_speech": "adj.",
-    "definition": "Dealing with things sensibly and realistically in a way that is based on practical rather than theoretical considerations.",
-    "example": "We need a pragmatic approach to solve this budget crisis."
+    "word": "Sorry",
+    "part_of_speech": "adj. (形容词)",
+    "definition": "抱歉/对不起",
+    "example": "I am sorry, I am late. (抱歉，我迟到了。)"
   },
   {
-    "word": "Esoteric",
-    "part_of_speech": "adj.",
-    "definition": "Intended for or likely to be understood by only a small number of people with a specialized knowledge or interest.",
-    "example": "The professor's lecture on quantum entanglement was too esoteric for the general audience."
+    "word": "Excuse me",
+    "part_of_speech": "phrase (短语)",
+    "definition": "打扰一下/借过",
+    "example": "Excuse me, where is the exit? (打扰一下，出口在哪里？)"
   },
   {
-    "word": "Alacrity",
-    "part_of_speech": "n.",
-    "definition": "Brisk and cheerful readiness.",
-    "example": "She accepted the invitation with alacrity."
+    "word": "Can I",
+    "part_of_speech": "phrase (常用句型)",
+    "definition": "我能不能... (请求许可)",
+    "example": "Can I have the bill? (我能结账吗？)"
   },
   {
-    "word": "Mellifluous",
-    "part_of_speech": "adj.",
-    "definition": "(of a voice or words) sweet or musical; pleasant to hear.",
-    "example": "She had a rich, mellifluous voice that captivated the audience."
+    "word": "Let's",
+    "part_of_speech": "phrase (常用句型)",
+    "definition": "让我们... (提议)",
+    "example": "Let's go to verify the code. (咱们去验代码吧。)"
   }
 ]
