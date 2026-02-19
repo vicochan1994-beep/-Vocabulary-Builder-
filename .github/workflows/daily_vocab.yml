@@ -1,0 +1,43 @@
+name: Vocabulary Builder Daily
+
+on:
+  schedule:
+    # Runs at 00:00 UTC (8:00 AM Beijing Time) every day
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allows manual triggering
+
+permissions:
+  issues: write
+
+jobs:
+  daily-vocab:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Generate Content
+        id: generate
+        run: |
+          cd scripts
+          python generate_vocab.py
+          # The script generates 'issue_body.md' and sets 'TITLE' output
+          # We need to capture the title from the script's output if using newer GITHUB_OUTPUT, 
+          # but for simplicity, let's assume the script prints the old instruction or we parse it.
+          # Here is a robust way:
+          echo "BODY_PATH=$(pwd)/issue_body.md" >> $GITHUB_ENV
+
+      - name: Create Issue
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: "🇬🇧 每日单词挑战 (Daily Vocab) - ${{ steps.date.outputs.date }}" # Simplified title logic
+          content-filepath: ${{ env.BODY_PATH }}
+          labels: |
+            vocabulary
+            daily-challenge
+          assignees: ${{ github.actor }} # Assign to the workflow triggerer (you)

@@ -1,0 +1,40 @@
+# 部署指南：每日单词 (Vocabulary Builder)
+
+Boss，你的 "强制学习机" 已经准备好了。
+按以下步骤操作，5 分钟内部署上线：
+
+## 1. 准备仓库
+在你的 GitHub 上新建一个仓库（Repository），名字比如叫 `my-daily-vocab`。
+
+## 2. 上传文件
+把这个文件夹里的内容原样复制进去，保持以下结构：
+```text
+.
+├── .github
+│   └── workflows
+│       └── daily_vocab.yml   <-- 自动化流水线
+├── scripts
+│   └── generate_vocab.py     <-- 生成脚本
+├── word_list.json            <-- 单词库 (你可以随时加新词)
+└── README.md
+```
+
+## 3. 启用权限
+为了让机器人能发 Issue，你需要检查仓库设置：
+1. 进入 `Settings` -> `Actions` -> `General`。
+2. 找到 `Workflow permissions`。
+3. 勾选 **"Read and write permissions"**。
+4. Save。
+
+## 4. 测试
+1. 进入 `Actions` 标签页。
+2. 左侧点击 `Vocabulary Builder Daily`。
+3. 点击右侧 `Run workflow` 按钮手动跑一次。
+
+**Boom!** 你的第一个单词 Issue 就会出现在 Issues 列表里。
+以后每天早上 8 点（北京时间），它都会准时来催你背单词。
+
+---
+**进阶玩法**：
+*   你可以编辑 [word_list.json](file:///Users/chenyonggang/.gemini/antigravity/brain/49cf1d79-e204-4b23-b3fc-d24620c14df9/vocabulary_builder/word_list.json)，把你想背的词（GRE/雅思/技术名词）加进去。
+*   嫌 JSON 麻烦？告诉我，我帮你改成从 API 抓取（比如由我每天自动生成 5 个新词）。
