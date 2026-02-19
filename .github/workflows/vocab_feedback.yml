@@ -27,7 +27,6 @@ jobs:
         run: pip install requests
 
       - name: Run AI Review
-        id: review
         env:
           COMMENT_BODY: ${{ github.event.comment.body }}
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
@@ -37,16 +36,13 @@ jobs:
           cd scripts
           python review_comment.py
           
-          if [ -f "feedback_body.md" ]; then
-             echo "HAS_FEEDBACK=true" >> $GITHUB_ENV
-             echo "FEEDBACK_PATH=$(pwd)/feedback_body.md" >> $GITHUB_ENV
+      - name: Check and Post Feedback
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          if [ -f "scripts/feedback_body.md" ]; then
+             gh issue comment "$ISSUE_NUMBER" --body-file "scripts/feedback_body.md"
           else
-             echo "HAS_FEEDBACK=false" >> $GITHUB_ENV
+             echo "No feedback generated (or file not found)."
           fi
-
-      - name: Post Feedback
-        if: env.HAS_FEEDBACK == 'true'
-        uses: peter-evans/create-or-update-comment@v3
-        with:
-          issue-number: ${{ github.event.issue.number }}
-          body-path: ${{ env.FEEDBACK_PATH }}
