@@ -26,18 +26,14 @@ jobs:
         run: |
           cd scripts
           python generate_vocab.py
-          # The script generates 'issue_body.md' and sets 'TITLE' output
-          # We need to capture the title from the script's output if using newer GITHUB_OUTPUT, 
-          # but for simplicity, let's assume the script prints the old instruction or we parse it.
-          # Here is a robust way:
           echo "BODY_PATH=$(pwd)/issue_body.md" >> $GITHUB_ENV
 
       - name: Create Issue
         uses: peter-evans/create-issue-from-file@v4
         with:
-          title: "🇬🇧 每日单词挑战 (Daily Vocab) - ${{ steps.date.outputs.date }}" # Simplified title logic
+          title: ${{ steps.generate.outputs.TITLE }}
           content-filepath: ${{ env.BODY_PATH }}
           labels: |
             vocabulary
             daily-challenge
-          assignees: ${{ github.actor }} # Assign to the workflow triggerer (you)
+          assignees: ${{ github.actor }}
