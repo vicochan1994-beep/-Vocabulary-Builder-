@@ -24,27 +24,24 @@ jobs:
           python-version: '3.9'
       
       - name: Install Dependencies
-        run: pip install requests
+        run: |
+          pip install requests google-generativeai
 
       - name: Run AI Review
         id: review
         env:
           COMMENT_BODY: ${{ github.event.comment.body }}
-          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}  # User needs to set this
-          LLM_BASE_URL: "https://api.deepseek.com" # Default to DeepSeek, editable
-          LLM_MODEL: "deepseek-chat"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # Updated secret name
         run: |
           cd scripts
           python review_comment.py
           
-          # Check if feedback file exists (it means we have a response)
+          # Check if feedback file exists
           if [ -f "feedback_body.md" ]; then
              echo "HAS_FEEDBACK=true" >> $GITHUB_ENV
              echo "FEEDBACK_PATH=$(pwd)/feedback_body.md" >> $GITHUB_ENV
           else
              echo "HAS_FEEDBACK=false" >> $GITHUB_ENV
-             # If script printed a fallback message to stdout (not implemented in script above exactly like this but fine)
-             # We rely on file existence
           fi
 
       - name: Post Feedback

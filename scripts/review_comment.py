@@ -1,13 +1,14 @@
 import os
-import json
-import requests
-import sys
+import google.generativeai as genai
 
-def check_grammar(comment_body, api_key):
-    # Determine API base URL and model based on available keys or defaults
-    # Defaulting to a generic OpenAI-compatible endpoint (could be DeepSeek, Moonshot, etc.)
-    base_url = os.environ.get("LLM_BASE_URL", "https://api.deepseek.com")
-    model = os.environ.get("LLM_MODEL", "deepseek-chat")
+def check_grammar_gemini(comment_body, api_key):
+    # Configure Gemini
+    genai.configure(api_key=api_key)
+    
+    # Use a specific, capable model. 
+    # In 2026, we assume 'gemini-1.5-pro' is standard/legacy and maybe 'gemini-2.0' exists, 
+    # but 'gemini-1.5-pro-latest' is a safe, high-quality bet for "latest version" alias.
+    model = genai.GenerativeModel('gemini-1.5-pro-latest')
     
     system_prompt = """
 You are a helpful, encouraging English teacher for a beginner student (Level A1/A2).
@@ -21,47 +22,36 @@ Your task:
 
 Format your response in Markdown. Keep it concise.
 """
-
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
     
-    data = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"Student's homework:\n{comment_body}"}
-        ],
-        "temperature": 0.7
-    }
+    # Gemini 1.5 style interaction
+    # We combine system prompt and user input as Gemini doesn't always strictly use 'system' role in same way as OpenAI in basic chats,
+    # but system_instruction is supported in newer SDKs. We'll use a direct prompt approach for robustness.
+    full_prompt = f"{system_prompt}\n\nStudent's homework:\n{comment_body}"
 
     try:
-        response = requests.post(f"{base_url}/chat/completions", headers=headers, json=data)
-        response.raise_for_status()
-        result = response.json()
-        return result['choices'][0]['message']['content']
+        response = model.generate_content(full_prompt)
+        return response.text
     except Exception as e:
-        return f"Error contacting AI Teacher: {str(e)}\n\n(Please check if your LLM_API_KEY is active in Repo Settings > Secrets)"
+        return f"Error contacting Gemini Teacher: {str(e)}\n\n(Please check if your GEMINI_API_KEY is correct in Repo Settings)"
 
 def main():
     comment_body = os.environ.get("COMMENT_BODY")
-    api_key = os.environ.get("LLM_API_KEY")
+    api_key = os.environ.get("GEMINI_API_KEY")
 
     if not comment_body:
         print("No comment body found.")
         return
 
     if not api_key:
-        # Graceful fallback if no key is configured
-        print("::set-output name=FEEDBACK::请在仓库设置里配置 settings -> secrets -> actions -> New repository secret，名字叫 `LLM_API_KEY`，填入你的 API Key (OpenAI/DeepSeek)，这样我才能帮你批改作业哦！")
+        print("Error: GEMINI_API_KEY not found.")
+        # Create a dummy file to warn user in the PR comment if we wanted, but better to fail or log.
+        # Let's write a warning message to the feedback file so the user sees it in the issue.
+        with open('feedback_body.md', 'w') as f:
+            f.write("⚠️ **AI 助教未启动**\n\n请在仓库 Settings -> Secrets -> Actions 里添加 `GEMINI_API_KEY`。\n(去 Google AI Studio 申请免费 Key)")
         return
 
-    feedback = check_grammar(comment_body, api_key)
+    feedback = check_grammar_gemini(comment_body, api_key)
     
-    # Escape special characters for GitHub Output if necessary, but writing to file is safer
-    # For GITHUB_ENV or GITHUB_OUTPUT
-    # We will write the body to a file to be picked up by the next step
     with open('feedback_body.md', 'w') as f:
         f.write(feedback)
 
