@@ -26,13 +26,12 @@ jobs:
         run: |
           cd scripts
           python generate_vocab.py
-          echo "BODY_PATH=$(pwd)/issue_body.md" >> $GITHUB_ENV
 
       - name: Create Issue
         uses: peter-evans/create-issue-from-file@v4
         with:
           title: ${{ steps.generate.outputs.TITLE }}
-          content-filepath: ${{ env.BODY_PATH }}
+          content-filepath: ./scripts/issue_body.md
           labels: |
             vocabulary
             daily-challenge
