@@ -5,11 +5,16 @@ from datetime import datetime
 
 def main():
     # Load word list
+    # Determine the directory of the script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # The word list is in the parent directory
+    file_path = os.path.join(script_dir, '..', 'word_list.json')
+    
     try:
-        with open('word_list.json', 'r') as f:
+        with open(file_path, 'r') as f:
             words = json.load(f)
     except FileNotFoundError:
-        print("Error: word_list.json not found.")
+        print(f"Error: word_list.json not found at {file_path}")
         return
 
     # Select 5 random words (or fewer if list is small)
