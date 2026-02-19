@@ -41,6 +41,12 @@ Boss，你的 "强制学习机" 已经准备好了。
 
 ## ❓ 常见问题 (Troubleshooting)
 
+### Q: 机器人报错 "403 Forbidden" (Gemini)？
+**A: 你的 API Key 权限受限 或 所在地区不支持。**
+1.  **地区限制**：Google Gemini 可能不对你所在地区的服务器开放 (GitHub Actions 的服务器可能在受限区)。
+2.  **API 未启用**：请去 Google Cloud Console 检查 `Generative Language API` 是否已启用。
+3.  **计费账户**：虽然有免费额度，但有时需要绑定一张卡才能激活。
+
 ### Q: 机器人报错 "402 Payment Required"？
 **A: 你的 DeepSeek API 余额不足。**
 *   请前往 [DeepSeek 控制台](https://platform.deepseek.com/) 充值（通常几块钱就够用很久）。
