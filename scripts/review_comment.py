@@ -4,10 +4,9 @@ import requests
 import sys
 
 def check_grammar(comment_body, api_key):
-    # Determine API base URL and model based on available keys or defaults
-    # Defaulting to a generic OpenAI-compatible endpoint (could be DeepSeek, Moonshot, etc.)
-    base_url = os.environ.get("LLM_BASE_URL", "https://api.deepseek.com")
-    model = os.environ.get("LLM_MODEL", "deepseek-chat")
+    # Google Gemini API
+    # Using gemini-1.5-flash for speed and free tier availability
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
     
     system_prompt = """
 You are a helpful, encouraging English teacher for a beginner student (Level A1/A2).
@@ -23,26 +22,26 @@ Format your response in Markdown. Keep it concise.
 """
 
     headers = {
-        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
     
+    # Gemini uses a different payload structure
     data = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"Student's homework:\n{comment_body}"}
-        ],
-        "temperature": 0.7
+        "contents": [{
+            "parts": [{
+                "text": f"{system_prompt}\n\nStudent's homework:\n{comment_body}"
+            }]
+        }]
     }
 
     try:
-        response = requests.post(f"{base_url}/chat/completions", headers=headers, json=data)
+        response = requests.post(url, headers=headers, json=data)
         response.raise_for_status()
         result = response.json()
-        return result['choices'][0]['message']['content']
+        # Parse Gemini response
+        return result['candidates'][0]['content']['parts'][0]['text']
     except Exception as e:
-        return f"Error contacting AI Teacher: {str(e)}\n\n(Please check if your LLM_API_KEY is active in Repo Settings > Secrets)"
+        return f"Error contacting AI Teacher (Gemini): {str(e)}\n\n(Please check if your LLM_API_KEY is active and valid for Google Gemini)"
 
 def main():
     comment_body = os.environ.get("COMMENT_BODY")
