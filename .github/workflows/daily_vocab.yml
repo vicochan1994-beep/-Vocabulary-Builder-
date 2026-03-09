@@ -1,9 +1,9 @@
 name: Vocabulary Builder Daily
 
 on:
-  schedule:
-    # Runs at 00:00 UTC (8:00 AM Beijing Time) every day
-    - cron: '0 0 * * *'
+  # schedule:
+  #   # Runs at 00:00 UTC (8:00 AM Beijing Time) every day
+  #   - cron: '0 0 * * *'
   workflow_dispatch: # Allows manual triggering
 
 permissions:
